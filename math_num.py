@@ -52,8 +52,10 @@ class math_num(object):
 	def __init__(self, num: int):
 		if not isinstance(num, int):
 			raise TypeError("num must be of type int")
-		if num < 0 or num > 9_999_999_999:
+		if num < 0:
 			raise ValueError("num must be greater than 0")
+		if num > 9_999_999_999:
+			raise ValueError("num must be less than 10^9")
 		self.num = num
 		self.sqrt = self.get_sqrt()
 		self.flist = self.get_factors()
@@ -63,19 +65,24 @@ class math_num(object):
 	def set_num(self, num: int):
 		if not isinstance(num, int):
 			raise TypeError("num must be of type int")
-		if num < 0 or num > 9_999_999_999:
+		if num < 0:
 			raise ValueError("num must be greater than 0")
+		if num > 9_999_999_999:
+			raise ValueError("num must be less than 10^9")
 		self.num = num
 		self.sqrt = self.get_sqrt()
 		self.flist = self.get_factors()
 		self.pflist = self.get_pfactors()
 
-	def set_prec(num: int):
+	def set_prec(self, num: int):
 		if not isinstance(num, int):
 			raise TypeError("num must be of type int")
-		if num < 0 or num > 100:
+		if num < 0:
 			raise ValueError("num must be greater than 0")
+		if num > 100:
+			raise ValueError("num must be less than 10^2")
 		math_num.precision = num
+		self.sqrt = self.get_sqrt()
 
 	def get_sqrt(self) -> float:
 		re = self.num
@@ -172,16 +179,16 @@ class tk_app(tk.Tk):
 		super().__init__()
 		self.title("math_num demo")
 
-		self.wnd_x = 980
-		self.wnd_y = 900
+		self.wnd_x = 950
+		self.wnd_y = 1070
 		self.scrn_x = self.winfo_screenwidth()
 		self.scrn_y = self.winfo_screenheight()
 		self.cntr_x = int(self.scrn_x / 2 - self.wnd_x / 2)
 		self.cntr_y = int(self.scrn_y / 2 - self.wnd_y / 2)
 		self.geometry(f"{self.wnd_x}x{self.wnd_y}+{self.cntr_x}+{self.cntr_y}")
-		self.resizable(False, False)
+		# self.resizable(False, False)
 
-		self.mn1 = math_num(16)
+		self.mn1 = math_num(21420)
 		self.mn2 = math_num(144)
 
 		# Num 1
@@ -485,21 +492,22 @@ class tk_app(tk.Tk):
 		self.var_sts.set("")
 
 		# Scrollbar
-		self.scrl = ttk.Scrollbar(
-			self
-		).grid(
-			row=0,
-			rowspan=15,
-			column=3,
-			sticky=tk.NE
-		)
+		# self.scrl = ttk.Scrollbar(
+		# 	self
+		# ).grid(
+		# 	row=0,
+		# 	rowspan=15,
+		# 	column=3,
+		# 	sticky=tk.NE
+		# )
 
 	def btn_update(self):
 		try:
 			self.var_sts.set("")
 			if int(self.var_prc.get()) != math_num.precision:
-				math_num.set_prec(int(self.var_prc.get()))
-				self.mn1.sqrt = self.mn1.get_sqrt()
+				# math_num.set_prec(int(self.var_prc.get()))
+				self.mn1.set_prec(int(self.var_prc.get()))
+				# self.mn1.sqrt = self.mn1.get_sqrt()
 				self.mn2.sqrt = self.mn2.get_sqrt()
 				self.var_prc.set(str(math_num.precision))
 				self.var_sqrt1.set(str(round(self.mn1.sqrt, 3)))
@@ -521,7 +529,7 @@ class tk_app(tk.Tk):
 				self.var_fct2.set(str(self.mn2.factors_tostring()))
 				self.var_pfct2.set(str(self.mn2.pfactors_tostring()))
 		except:
-			self.var_sts.set("Error:\nNumbers = int x, such that: 0 < x < 10^9\nPrecision = int y, such that: 0 < y < 100")
+			self.var_sts.set("Error:\nNumbers = int x, such that: 0 < x < 10^9\nPrecision = int y, such that: 0 < y < 10^2")
 
 
 def tkmn_demo():
